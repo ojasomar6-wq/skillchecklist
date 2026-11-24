@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillCheck - HTML Moderate Test</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4ff;
+      color: #252641;
+      line-height: 1.5;
+    }
+
+    nav {
+      background: #fff;
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 10px #0000000d;
+    }
+
+    nav h2 {
+      margin: 0;
+      color: #6254df;
+    }
+
+    nav a {
+      color: #6254df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      width: min(850px, 94%);
+      margin: 28px auto;
+    }
+
+    .header,
+    .question-card,
+    .result-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px #3434770b;
+    }
+
+    .header h1 {
+      color: #6254df;
+      margin: 0 0 8px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+    }
+
+    .test-info {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #timer {
+      color: #d93045;
+    }
+
+    .question-card {
+      width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .question-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .question-number {
+      flex-shrink: 0;
+      color: #6254df;
+      font-weight: bold;
+    }
+
+    .question-text {
+      min-width: 0;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      margin: 10px 0;
+      background: #f7f7ff;
+      border: 1px solid #e1e2f4;
+      border-radius: 9px;
+      cursor: pointer;
+      text-align: left;
+      overflow-wrap: anywhere;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .option:hover {
+      background: #eeeeff;
+      border-color: #aaa1ff;
+    }
+
+    .option.selected {
+      background: #e9e7ff;
+      border-color: #6254df;
+    }
+
+    .option-letter {
+      flex-shrink: 0;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .option.selected .option-letter {
+      background: #6254df;
+      border-color: #6254df;
+      color: white;
+    }
+
+    .option.correct {
+      background: #e1f8e8;
+      border-color: #28a745;
+    }
+
+    .option.wrong {
+      background: #ffe5e8;
+      border-color: #dc3545;
+    }
+
+    .option:disabled {
+      cursor: default;
+      color: #252641;
+      opacity: 1;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary-btn {
+      background: #6254df;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #4e40ca;
+    }
+
+    .secondary-btn {
+      background: #e9e8ff;
+      color: #5143ce;
+    }
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card h2 {
+      color: #6254df;
+      margin-top: 0;
+    }
+
+    #scoreText {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .review-item {
+      padding: 16px;
+      margin-top: 14px;
+      background: #f7f7ff;
+      border-radius: 9px;
+      overflow-wrap: anywhere;
+    }
+
+    .review-item p {
+      margin: 8px 0;
+    }
+
+    .correct-text {
+      color: #16803d;
+    }
+
+    .wrong-text {
+      color: #d12b3f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 12px;
+      color: #777;
+    }
+
+    @media (max-width: 520px) {
+      .header,
+      .question-card,
+      .result-card {
+        padding: 17px;
+      }
+
+      .test-info {
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .question-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <h2>SkillCheck</h2>
+    <a href="main.html">← Dashboard</a>
+  </nav>
+
+  <main class="container">
+
+    <section class="header" id="testHeader">
+      <h1>HTML - Moderate Test</h1>
+      <p>Test your HTML fundamentals. Choose one answer for each question.</p>
+
+      <div class="test-info">
+        <span>Questions: 25</span>
+        <span>Maximum Marks: 25</span>
+        <span id="timer">Time Left: 10:00</span>
+      </div>
+    </section>
+
+    <form id="testForm">
+      <div id="questionsContainer"></div>
+
+      <div class="actions" id="testActions">
+        <a href="main.html" style="color:#6254df;text-decoration:none;">
+          Back to Dashboard
+        </a>
+
+        <button type="submit" class="btn primary-btn" id="submitBtn">
+          Submit Test
+        </button>
+      </div>
+    </form>
+
+    <section class="result-card" id="resultCard">
+      <h2>Test Completed!</h2>
+      <p id="scoreText"></p>
+      <p id="resultMessage"></p>
+
+      <div class="actions">
+        <a href="main.html" style="text-decoration:none;">
+          <button type="button" class="btn secondary-btn">Dashboard</button>
+        </a>
+
+        <button type="button" class="btn primary-btn" onclick="location.reload()">
+          Try Again
+        </button>
+      </div>
+
+      <h3>Answer Review</h3>
+      <div id="reviewContainer"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2026 SkillCheck | Improve Your Skills, One Test at a Time
+  </footer>
+
+  <script>
+    // QUESTION BANK: 25 HTML Moderate questions
+
+    const allQuestions = [
+      {
+        q: "What is the main purpose of the semantic <main> element?",
+        options: [
+          "To contain the page's primary content",
+          "To create the main navigation menu",
+          "To define metadata",
+          "To load JavaScript"
+        ],
+        answer: 0,
+        explanation: "The main element identifies the dominant content of the document."
+      },
+      {
+        q: "Which attribute associates a <label> with an input when the input is not nested inside it?",
+        options: ["name", "for", "value", "action"],
+        answer: 1,
+        explanation: "The label's for value must match the input element's id."
+      },
+      {
+        q: "What is the purpose of the name attribute on form controls?",
+        options: [
+          "It sets the visible label",
+          "It identifies the control in submitted form data",
+          "It validates the field automatically",
+          "It assigns CSS styling"
+        ],
+        answer: 1,
+        explanation: "The name is used as the key when form data is submitted."
+      },
+      {
+        q: "Which form method normally places submitted values in the URL query string?",
+        options: ["POST", "PUT", "GET", "PATCH"],
+        answer: 2,
+        explanation: "GET appends form data to the URL as query parameters."
+      },
+      {
+        q: "Which attribute prevents a form from being submitted when a required field is empty?",
+        options: ["placeholder", "required", "autocomplete", "autofocus"],
+        answer: 1,
+        explanation: "The required attribute enables built-in constraint validation."
+      },
+      {
+        q: "Which element groups related controls in a form and can provide a caption?",
+        options: ["<group>", "<fieldset>", "<formgroup>", "<legend>"],
+        answer: 1,
+        explanation: "Fieldset groups related form controls; legend supplies its caption."
+      },
+      {
+        q: "Where should a <meta name=\"viewport\"> element normally be placed?",
+        options: [
+          "Inside <body>",
+          "Inside <head>",
+          "After </html>",
+          "Inside <footer>"
+        ],
+        answer: 1,
+        explanation: "Viewport metadata belongs in the document head."
+      },
+      {
+        q: "What does the defer attribute do on an external script?",
+        options: [
+          "Runs the script before HTML parsing",
+          "Downloads the script and executes it after parsing",
+          "Runs the script repeatedly",
+          "Blocks the browser from loading CSS"
+        ],
+        answer: 1,
+        explanation: "A deferred external script executes after parsing and before DOMContentLoaded."
+      },
+      {
+        q: "Which element is most appropriate for a self-contained blog post that could be reused independently?",
+        options: ["<section>", "<article>", "<aside>", "<span>"],
+        answer: 1,
+        explanation: "Article represents a self-contained composition."
+      },
+      {
+        q: "What is the key difference between id and class?",
+        options: [
+          "An id is intended to be unique; a class can be reused",
+          "A class can only be used once",
+          "An id is only for CSS",
+          "There is no difference"
+        ],
+        answer: 0,
+        explanation: "An id identifies one element, while classes can be shared by multiple elements."
+      },
+      {
+        q: "Which attribute provides a text alternative for an image when it cannot be seen?",
+        options: ["title", "alt", "aria-hidden", "longdesc"],
+        answer: 1,
+        explanation: "Alt text communicates the image's meaning or purpose."
+      },
+      {
+        q: "Which element is intended to associate a caption with a <figure>?",
+        options: ["<caption>", "<figcaption>", "<legend>", "<summary>"],
+        answer: 1,
+        explanation: "Figcaption provides a caption or legend for its figure."
+      },
+      {
+        q: "Which element represents a date or time in a machine-readable form?",
+        options: ["<date>", "<time>", "<datetime>", "<clock>"],
+        answer: 1,
+        explanation: "The time element can use datetime to provide a machine-readable value."
+      },
+      {
+        q: "Which attribute on an <a> element specifies that the destination should open in a new tab or browsing context?",
+        options: ["rel=\"new\"", "target=\"_blank\"", "open=\"tab\"", "window=\"new\""],
+        answer: 1,
+        explanation: "target=\"_blank\" requests a new browsing context."
+      },
+      {
+        q: "When using target=\"_blank\", which rel value is commonly added for security and privacy?",
+        options: ["nofollow", "noopener", "external-only", "safe"],
+        answer: 1,
+        explanation: "noopener prevents the opened page from accessing the opener window."
+      },
+      {
+        q: "Which element is used to provide multiple image sources for responsive image selection?",
+        options: [
+          "<source> inside <picture>",
+          "<imgset>",
+          "<responsive>",
+          "<media>"
+        ],
+        answer: 0,
+        explanation: "Picture can contain source elements for different image candidates."
+      },
+      {
+        q: "What does the colspan attribute do in a table cell?",
+        options: [
+          "Joins cells vertically",
+          "Makes a cell span multiple columns",
+          "Adds a table caption",
+          "Hides a column"
+        ],
+        answer: 1,
+        explanation: "Colspan specifies how many columns a cell should span."
+      },
+      {
+        q: "Which element should contain column headings in a semantic table?",
+        options: ["<td>", "<th>", "<tr>", "<col>"],
+        answer: 1,
+        explanation: "Header cells use th; scope can clarify whether they label rows or columns."
+      },
+      {
+        q: "What is the purpose of the scope attribute on a table header cell?",
+        options: [
+          "To set its width",
+          "To identify the cells the header applies to",
+          "To merge columns",
+          "To add a border"
+        ],
+        answer: 1,
+        explanation: "Scope clarifies whether a header applies to a row, column, row group, or column group."
+      },
+      {
+        q: "Which input type is designed for selecting one option from a group of mutually exclusive choices?",
+        options: ["checkbox", "radio", "text", "range"],
+        answer: 1,
+        explanation: "Radio buttons in the same named group allow one selection."
+      },
+      {
+        q: "Which attribute connects a <datalist> to an <input>?",
+        options: ["for", "list", "data", "options"],
+        answer: 1,
+        explanation: "The input's list attribute references the datalist id."
+      },
+      {
+        q: "What does the pattern attribute do on supported input elements?",
+        options: [
+          "Sets a regular-expression validation pattern",
+          "Changes the input's font",
+          "Limits the number of options",
+          "Creates a placeholder"
+        ],
+        answer: 0,
+        explanation: "Pattern specifies a regular expression that the input value must match."
+      },
+      {
+        q: "Which element is appropriate for a disclosure widget that the user can expand or collapse?",
+        options: ["<details>", "<dialog>", "<summary> alone", "<output>"],
+        answer: 0,
+        explanation: "Details creates a disclosure widget; summary provides its visible heading."
+      },
+      {
+        q: "What is the role of the <summary> element?",
+        options: [
+          "It defines the document title",
+          "It provides the visible label for a details disclosure",
+          "It summarizes form data automatically",
+          "It creates a footer"
+        ],
+        answer: 1,
+        explanation: "Summary is the caption or legend for its parent details element."
+      },
+      {
+        q: "Which attribute makes an audio or video element display built-in playback controls?",
+        options: ["controls", "play", "interface", "toolbar"],
+        answer: 0,
+        explanation: "The boolean controls attribute asks the browser to show media controls."
+      }
+    ];
+
+    const QUESTIONS_PER_TEST = 25;
+    const TOTAL_TIME = 10 * 60;
+
+    const form = document.getElementById("testForm");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const timerElement = document.getElementById("timer");
+    const resultCard = document.getElementById("resultCard");
+    const reviewContainer = document.getElementById("reviewContainer");
+
+    let quizQuestions = [];
+    let selectedAnswers = [];
+    let timeLeft = TOTAL_TIME;
+    let timerInterval = null;
+    let submitted = false;
+
+    // HTML Moderate test page check
+
+    const selectedSkill = localStorage.getItem("selectedSkill");
+    const selectedLevel = localStorage.getItem("selectedLevel");
+
+    if (
+      (selectedSkill && selectedSkill !== "HTML") ||
+      (selectedLevel && selectedLevel !== "Moderate")
+    ) {
+      document.getElementById("testHeader").style.display = "none";
+      form.style.display = "none";
+      resultCard.style.display = "block";
+
+      resultCard.innerHTML = `
+        <h2>Test Not Available Yet</h2>
+        <p>Abhi sirf HTML Moderate test ready hai.</p>
+        <p>Dashboard par jaakar HTML Moderate select karo.</p>
+        <br>
+        <a href="main.html">Back to Dashboard</a>
+      `;
+    } else {
+      startTest();
+    }
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled;
+    }
+
+    function startTest() {
+      quizQuestions = shuffleArray(allQuestions).slice(0, QUESTIONS_PER_TEST);
+
+      selectedAnswers = Array(quizQuestions.length).fill(null);
+
+      renderQuestions();
+      updateTimer();
+
+      timerInterval = setInterval(tickTimer, 1000);
+    }
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const card = document.createElement("section");
+        card.className = "question-card";
+
+        const title = document.createElement("h3");
+        title.className = "question-title";
+
+        const number = document.createElement("span");
+        number.className = "question-number";
+        number.textContent = `Q${questionIndex + 1}.`;
+
+        const questionText = document.createElement("span");
+        questionText.className = "question-text";
+        questionText.textContent = question.q;
+
+        title.append(number, questionText);
+        card.appendChild(title);
+
+        // Shuffle options while preserving the correct answer
+
+        const options = shuffleArray(
+          question.options.map((text, originalIndex) => ({
+            text,
+            isCorrect: originalIndex === question.answer
+          }))
+        );
+
+        question.displayOptions = options;
+
+        options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "option";
+
+          const letter = document.createElement("span");
+          letter.className = "option-letter";
+          letter.textContent = String.fromCharCode(65 + optionIndex);
+
+          const text = document.createElement("span");
+          text.textContent = option.text;
+
+          button.append(letter, text);
+
+          button.addEventListener("click", () => {
+            if (submitted) return;
+
+            selectedAnswers[questionIndex] = optionIndex;
+
+            card.querySelectorAll(".option").forEach(item => {
+              item.classList.remove("selected");
+            });
+
+            button.classList.add("selected");
+          });
+
+          card.appendChild(button);
+        });
+
+        questionsContainer.appendChild(card);
+      });
+    }
+
+    function tickTimer() {
+      if (submitted) return;
+
+      timeLeft--;
+      updateTimer();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        finishTest(true);
+      }
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      timerElement.textContent =
+        `Time Left: ${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (submitted) return;
+
+      const attempted = selectedAnswers.filter(
+        answer => answer !== null
+      ).length;
+
+      if (!confirm(
+        `You answered ${attempted} out of ${QUESTIONS_PER_TEST} questions. Submit test?`
+      )) {
+        return;
+      }
+
+      finishTest(false);
+    });
+
+    function finishTest(autoSubmitted) {
+      if (submitted) return;
+
+      submitted = true;
+      clearInterval(timerInterval);
+
+      let score = 0;
+      let attempted = 0;
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        if (selected !== null) attempted++;
+
+        const correctDisplayIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        if (selected === correctDisplayIndex) score++;
+
+        const card = questionsContainer.children[questionIndex];
+        const optionButtons = card.querySelectorAll(".option");
+
+        optionButtons.forEach((button, optionIndex) => {
+          button.disabled = true;
+
+          if (question.displayOptions[optionIndex].isCorrect) {
+            button.classList.add("correct");
+          }
+
+          if (
+            selected === optionIndex &&
+            !question.displayOptions[optionIndex].isCorrect
+          ) {
+            button.classList.add("wrong");
+          }
+        });
+      });
+
+      form.style.display = "none";
+      document.getElementById("testHeader").style.display = "none";
+      resultCard.style.display = "block";
+
+      const percentage = Math.round(
+        (score / QUESTIONS_PER_TEST) * 100
+      );
+
+      document.getElementById("scoreText").textContent =
+        `Your Score: ${score}/${QUESTIONS_PER_TEST} (${percentage}%)`;
+
+      document.getElementById("resultMessage").textContent =
+        `${attempted} attempted • ${QUESTIONS_PER_TEST - attempted} unanswered` +
+        (autoSubmitted ? " • Time is over; test submitted automatically." : "");
+
+      renderReview();
+      saveTestHistory(score);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderReview() {
+      reviewContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        const correctIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        const review = document.createElement("div");
+        review.className = "review-item";
+
+        const title = document.createElement("strong");
+        title.textContent = `Q${questionIndex + 1}. ${question.q}`;
+
+        review.appendChild(title);
+
+        const yourAnswer = document.createElement("p");
+
+        yourAnswer.textContent = selected === null
+          ? "Your answer: Not attempted"
+          : `Your answer: ${question.displayOptions[selected].text}`;
+
+        yourAnswer.className =
+          selected === correctIndex ? "correct-text" : "wrong-text";
+
+        review.appendChild(yourAnswer);
+
+        const correctAnswer = document.createElement("p");
+        correctAnswer.className = "correct-text";
+
+        correctAnswer.textContent =
+          `Correct answer: ${question.displayOptions[correctIndex].text}`;
+
+        review.appendChild(correctAnswer);
+
+        const explanation = document.createElement("p");
+        explanation.textContent = `Explanation: ${question.explanation}`;
+
+        review.appendChild(explanation);
+        reviewContainer.appendChild(review);
+      });
+    }
+
+    function saveTestHistory(score) {
+      const currentUser = JSON.parse(
+        localStorage.getItem("skillCheckCurrentUser") || "null"
+      );
+
+      if (!currentUser || !currentUser.username) return;
+
+      let history = [];
+
+      try {
+        const storedHistory = JSON.parse(
+          localStorage.getItem("skillCheckTestHistory") || "[]"
+        );
+
+        if (Array.isArray(storedHistory)) {
+          history = storedHistory;
+        }
+      } catch (error) {
+        history = [];
+      }
+
+      history.push({
+        username: currentUser.username,
+        skill: "HTML",
+        level: "Moderate",
+        score: score,
+        date: new Date().toLocaleString()
+      });
+
+      localStorage.setItem(
+        "skillCheckTestHistory",
+        JSON.stringify(history)
+      );
+    }
+  </script>
+
+</body>
+</html>

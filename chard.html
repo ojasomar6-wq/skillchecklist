@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillCheck - C Hard Test</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4ff;
+      color: #252641;
+      line-height: 1.5;
+    }
+
+    nav {
+      background: #fff;
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 10px #0000000d;
+    }
+
+    nav h2 {
+      margin: 0;
+      color: #6254df;
+    }
+
+    nav a {
+      color: #6254df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      width: min(850px, 94%);
+      margin: 28px auto;
+    }
+
+    .header,
+    .question-card,
+    .result-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px #3434770b;
+    }
+
+    .header h1 {
+      color: #6254df;
+      margin: 0 0 8px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+    }
+
+    .test-info {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #timer {
+      color: #d93045;
+    }
+
+    .question-card {
+      width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .question-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .question-number {
+      flex-shrink: 0;
+      color: #6254df;
+      font-weight: bold;
+    }
+
+    .question-text {
+      min-width: 0;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      margin: 10px 0;
+      background: #f7f7ff;
+      border: 1px solid #e1e2f4;
+      border-radius: 9px;
+      cursor: pointer;
+      text-align: left;
+      overflow-wrap: anywhere;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .option:hover {
+      background: #eeeeff;
+      border-color: #aaa1ff;
+    }
+
+    .option.selected {
+      background: #e9e7ff;
+      border-color: #6254df;
+    }
+
+    .option-letter {
+      flex-shrink: 0;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .option.selected .option-letter {
+      background: #6254df;
+      border-color: #6254df;
+      color: white;
+    }
+
+    .option.correct {
+      background: #e1f8e8;
+      border-color: #28a745;
+    }
+
+    .option.wrong {
+      background: #ffe5e8;
+      border-color: #dc3545;
+    }
+
+    .option:disabled {
+      cursor: default;
+      color: #252641;
+      opacity: 1;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary-btn {
+      background: #6254df;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #4e40ca;
+    }
+
+    .secondary-btn {
+      background: #e9e8ff;
+      color: #5143ce;
+    }
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card h2 {
+      color: #6254df;
+      margin-top: 0;
+    }
+
+    #scoreText {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .review-item {
+      padding: 16px;
+      margin-top: 14px;
+      background: #f7f7ff;
+      border-radius: 9px;
+      overflow-wrap: anywhere;
+    }
+
+    .review-item p {
+      margin: 8px 0;
+    }
+
+    .correct-text {
+      color: #16803d;
+    }
+
+    .wrong-text {
+      color: #d12b3f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 12px;
+      color: #777;
+    }
+
+    @media (max-width: 520px) {
+      .header,
+      .question-card,
+      .result-card {
+        padding: 17px;
+      }
+
+      .test-info {
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .question-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <h2>SkillCheck</h2>
+    <a href="main.html">← Dashboard</a>
+  </nav>
+
+  <main class="container">
+
+    <section class="header" id="testHeader">
+      <h1>C Language - Hard Test</h1>
+      <p>Test your C programming fundamentals. Choose one answer for each question.</p>
+
+      <div class="test-info">
+        <span>Questions: 25</span>
+        <span>Maximum Marks: 25</span>
+        <span id="timer">Time Left: 10:00</span>
+      </div>
+    </section>
+
+    <form id="testForm">
+      <div id="questionsContainer"></div>
+
+      <div class="actions" id="testActions">
+        <a href="main.html" style="color:#6254df;text-decoration:none;">
+          Back to Dashboard
+        </a>
+
+        <button type="submit" class="btn primary-btn" id="submitBtn">
+          Submit Test
+        </button>
+      </div>
+    </form>
+
+    <section class="result-card" id="resultCard">
+      <h2>Test Completed!</h2>
+      <p id="scoreText"></p>
+      <p id="resultMessage"></p>
+
+      <div class="actions">
+        <a href="main.html" style="text-decoration:none;">
+          <button type="button" class="btn secondary-btn">Dashboard</button>
+        </a>
+
+        <button type="button" class="btn primary-btn" onclick="location.reload()">
+          Try Again
+        </button>
+      </div>
+
+      <h3>Answer Review</h3>
+      <div id="reviewContainer"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2026 SkillCheck | Improve Your Skills, One Test at a Time
+  </footer>
+
+  <script>
+
+    // QUESTION BANK: 25 C Language Hard questions
+
+    const allQuestions = [
+      {
+        q: "What is the output?\n\nint a[] = {2, 4, 6, 8};\nint *p = a;\nprintf(\"%d\", *(p + 3) - *(p + 1));",
+        options: ["2", "4", "6", "8"],
+        answer: 1,
+        explanation: "p + 3 points to 8 and p + 1 points to 4. Their difference is 4."
+      },
+      {
+        q: "Which declaration defines a pointer to a function that takes a pointer to int and returns a pointer to int?",
+        options: ["int *fp(int *);", "int (*fp)(int *);", "int *(*fp)(int *);", "int (**fp)(int);"],
+        answer: 2,
+        explanation: "int *(*fp)(int *) declares fp as a pointer to a function that accepts int * and returns int *."
+      },
+      {
+        q: "What is the output?\n\nint x = 7;\nint *p = &x;\nint **q = &p;\n**q = 15;\nprintf(\"%d\", x);",
+        options: ["7", "15", "Address of p", "Compilation error"],
+        answer: 1,
+        explanation: "q points to p, and *q is p. Therefore **q accesses x, so assigning 15 changes x."
+      },
+      {
+        q: "What is the output?\n\nint x = 10;\nint y = (x++, ++x);\nprintf(\"%d %d\", x, y);",
+        options: ["12 12", "11 12", "12 11", "Undefined behavior"],
+        answer: 0,
+        explanation: "The comma operator sequences its left operand before its right operand. x becomes 11, then 12; the expression value is 12."
+      },
+      {
+        q: "Which statement about realloc() is safest when resizing a dynamically allocated block?",
+        options: ["Assign its result directly to the only pointer", "Use a temporary pointer and check for NULL", "Call free() before every realloc()", "realloc() always preserves the original address"],
+        answer: 1,
+        explanation: "If realloc() fails for a nonzero size, it returns NULL while the original block remains allocated. A temporary pointer prevents losing the original address."
+      },
+      {
+        q: "What is the output?\n\nint a[3][4];\nprintf(\"%zu\", sizeof(a) / sizeof(a[0]));",
+        options: ["3", "4", "12", "Size of a pointer"],
+        answer: 0,
+        explanation: "sizeof(a) is the size of all 3 rows, and sizeof(a[0]) is the size of one row. Their ratio is 3."
+      },
+      {
+        q: "Which statement about a pointer to an array is correct?",
+        options: ["int *p[5] declares a pointer to an array of 5 integers", "int (*p)[5] declares a pointer to an array of 5 integers", "int **p declares a pointer to an array of 5 integers", "int p[5] declares a pointer to an array"],
+        answer: 1,
+        explanation: "Parentheses make *p bind before [5], so p is a pointer to an array of five integers."
+      },
+      {
+        q: "What is the output?\n\nint x = 5;\nint y = 2;\nprintf(\"%d\", x / y + x % y);",
+        options: ["2", "3", "4", "5"],
+        answer: 1,
+        explanation: "Integer division gives 5 / 2 = 2 and the remainder is 1. Their sum is 3."
+      },
+      {
+        q: "Which storage duration applies to a file-scope variable declared with static?",
+        options: ["Automatic", "Allocated only during its function call", "Static storage duration with internal linkage", "Dynamic storage duration"],
+        answer: 2,
+        explanation: "A file-scope static object has static storage duration and internal linkage, limiting its name's visibility to that translation unit."
+      },
+      {
+        q: "What is the output?\n\nchar s[] = \"hello\";\nchar *p = s;\nprintf(\"%c\", *(p + 2));",
+        options: ["h", "e", "l", "o"],
+        answer: 2,
+        explanation: "Pointer arithmetic starts at index zero: p + 2 points to s[2], which contains 'l'."
+      },
+      {
+        q: "Which is the correct way to declare a constant pointer to an integer?",
+        options: ["const int *p", "int *const p", "const int const *p", "int const *const p only"],
+        answer: 1,
+        explanation: "int *const p makes the pointer itself constant. The integer it points to may still be modified through p."
+      },
+      {
+        q: "What is the output?\n\nint f(int n) {\n    if (n == 0) return 1;\n    return n * f(n - 1);\n}\nprintf(\"%d\", f(4));",
+        options: ["10", "16", "24", "120"],
+        answer: 2,
+        explanation: "The recursive function computes 4 × 3 × 2 × 1, which is 24."
+      },
+      {
+        q: "Which statement about a union is correct after assigning a value to one member?",
+        options: ["All members retain independent values", "The stored representation is shared by all members", "The union allocates separate memory for each member", "A union cannot contain arrays"],
+        answer: 1,
+        explanation: "Union members overlap in memory. Writing one member changes the shared storage; interpreting another member is generally implementation-dependent and may not yield a meaningful value."
+      },
+      {
+        q: "What is the output?\n\nint a = 3;\nint b = 4;\nint *p = &a;\n*p += b;\nprintf(\"%d\", a);",
+        options: ["3", "4", "7", "Address of a"],
+        answer: 2,
+        explanation: "*p refers to a. The compound assignment adds b to a, changing a from 3 to 7."
+      },
+      {
+        q: "Which function is used to set a block of memory to a specified byte value?",
+        options: ["memcpy()", "memmove()", "memset()", "memcmp()"],
+        answer: 2,
+        explanation: "memset() fills the first n bytes of a memory block with the specified byte value."
+      },
+      {
+        q: "What is the output?\n\nint x = 1;\nint y = 2;\nint *p = &x;\n*p = y;\nprintf(\"%d %d\", x, y);",
+        options: ["1 2", "2 2", "1 1", "Address values"],
+        answer: 1,
+        explanation: "p points to x, so *p = y copies the value 2 into x. y remains 2."
+      },
+      {
+        q: "Which condition must be satisfied for binary search to work correctly on an array?",
+        options: ["The array must contain only positive integers", "The array must be sorted according to the searched order", "The array size must be a power of two", "The array must contain distinct values"],
+        answer: 1,
+        explanation: "Binary search eliminates half the search interval at each step, which requires the elements to be sorted."
+      },
+      {
+        q: "What is the output?\n\nint a[] = {10, 20, 30, 40, 50};\nint *p = &a[1];\nprintf(\"%d\", p[2]);",
+        options: ["20", "30", "40", "50"],
+        answer: 2,
+        explanation: "p points to a[1]. p[2] is equivalent to *(p + 2), which is a[3], or 40."
+      },
+      {
+        q: "Which statement about the restrict keyword in C is correct?",
+        options: ["It makes a variable read-only", "It is a type qualifier that gives the compiler an aliasing-related promise", "It allocates memory dynamically", "It prevents a pointer from being NULL"],
+        answer: 1,
+        explanation: "restrict is a type qualifier used to promise that, for the relevant access, an object is accessed through the based pointer expression, enabling optimizations when the promise is honored."
+      },
+      {
+        q: "What does the following declaration mean?\n\nint (*a)[10];",
+        options: ["a is an array of 10 integer pointers", "a is a pointer to an array of 10 integers", "a is a function returning 10 integers", "a is a pointer to a pointer to int"],
+        answer: 1,
+        explanation: "The parentheses bind *a together, and [10] makes the pointed-to object an array of ten integers."
+      },
+      {
+        q: "Which function can safely copy overlapping memory regions?",
+        options: ["memcpy()", "strcpy()", "memmove()", "strcmp()"],
+        answer: 2,
+        explanation: "memmove() is specified to handle overlapping source and destination regions. memcpy() requires the regions not to overlap."
+      },
+      {
+        q: "What is the output?\n\nint x = 8;\nint *p = &x;\nconst int **q = &p;",
+        options: ["Valid: q is a pointer to pointer to const int", "Constraint violation: incompatible pointer types", "Valid only if x is zero", "Compilation error because const cannot qualify int"],
+        answer: 1,
+        explanation: "A pointer to int* cannot be safely converted to const int**. Such a conversion could allow storing a pointer-to-const into a pointer that is later used as int*."
+      },
+      {
+        q: "Which statement about returning the address of a non-static local variable from a function is correct?",
+        options: ["The object remains alive until program termination", "The returned pointer becomes dangling after the function returns", "The compiler automatically allocates it on the heap", "The pointer is always set to NULL"],
+        answer: 1,
+        explanation: "An automatic local object's lifetime ends when its block is exited. A pointer to it then becomes indeterminate/dangling and must not be dereferenced."
+      },
+      {
+        q: "What is the output?\n\nunsigned int x = 1;\nprintf(\"%u\", x << 3);",
+        options: ["1", "3", "8", "Undefined behavior"],
+        answer: 2,
+        explanation: "Shifting the unsigned value 1 left by three positions produces 8. The result is representable in unsigned int."
+      },
+      {
+        q: "Which statement about a flexible array member in a structure is correct?",
+        options: ["It must be the first member", "It must be the last member and has incomplete array type", "It has a fixed size of one element", "It can be followed by ordinary structure members"],
+        answer: 1,
+        explanation: "A flexible array member is the final member of a structure and has incomplete array type; extra storage can be allocated after the structure for its elements."
+      }
+    ];
+
+    const QUESTIONS_PER_TEST = 25;
+    const TOTAL_TIME = 10 * 60;
+
+    const form = document.getElementById("testForm");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const timerElement = document.getElementById("timer");
+    const resultCard = document.getElementById("resultCard");
+    const reviewContainer = document.getElementById("reviewContainer");
+
+    let quizQuestions = [];
+    let selectedAnswers = [];
+    let timeLeft = TOTAL_TIME;
+    let timerInterval = null;
+    let submitted = false;
+
+    // C Hard test page check
+
+    const selectedSkill = localStorage.getItem("selectedSkill");
+    const selectedLevel = localStorage.getItem("selectedLevel");
+
+    if (
+      (selectedSkill && selectedSkill !== "C") ||
+      (selectedLevel && selectedLevel !== "Hard")
+    ) {
+      document.getElementById("testHeader").style.display = "none";
+      form.style.display = "none";
+      resultCard.style.display = "block";
+
+      resultCard.innerHTML = `
+        <h2>Test Not Available Yet</h2>
+        <p>Abhi sirf C Hard test select karo.</p>
+        <p>Dashboard par jaakar C Hard select karo.</p>
+        <br>
+        <a href="main.html">Back to Dashboard</a>
+      `;
+    } else {
+      startTest();
+    }
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled;
+    }
+
+    function startTest() {
+      quizQuestions = shuffleArray(allQuestions).slice(0, QUESTIONS_PER_TEST);
+
+      selectedAnswers = Array(quizQuestions.length).fill(null);
+
+      renderQuestions();
+      updateTimer();
+
+      timerInterval = setInterval(tickTimer, 1000);
+    }
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const card = document.createElement("section");
+        card.className = "question-card";
+
+        const title = document.createElement("h3");
+        title.className = "question-title";
+
+        const number = document.createElement("span");
+        number.className = "question-number";
+        number.textContent = `Q${questionIndex + 1}.`;
+
+        const questionText = document.createElement("span");
+        questionText.className = "question-text";
+        questionText.textContent = question.q;
+
+        title.append(number, questionText);
+        card.appendChild(title);
+
+        // Shuffle options while preserving the correct answer
+
+        const options = shuffleArray(
+          question.options.map((text, originalIndex) => ({
+            text,
+            isCorrect: originalIndex === question.answer
+          }))
+        );
+
+        question.displayOptions = options;
+
+        options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "option";
+
+          const letter = document.createElement("span");
+          letter.className = "option-letter";
+          letter.textContent = String.fromCharCode(65 + optionIndex);
+
+          const text = document.createElement("span");
+          text.textContent = option.text;
+
+          button.append(letter, text);
+
+          button.addEventListener("click", () => {
+            if (submitted) return;
+
+            selectedAnswers[questionIndex] = optionIndex;
+
+            card.querySelectorAll(".option").forEach(item => {
+              item.classList.remove("selected");
+            });
+
+            button.classList.add("selected");
+          });
+
+          card.appendChild(button);
+        });
+
+        questionsContainer.appendChild(card);
+      });
+    }
+
+    function tickTimer() {
+      if (submitted) return;
+
+      timeLeft--;
+      updateTimer();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        finishTest(true);
+      }
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      timerElement.textContent =
+        `Time Left: ${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (submitted) return;
+
+      const attempted = selectedAnswers.filter(
+        answer => answer !== null
+      ).length;
+
+      if (!confirm(
+        `You answered ${attempted} out of ${QUESTIONS_PER_TEST} questions. Submit test?`
+      )) {
+        return;
+      }
+
+      finishTest(false);
+    });
+
+    function finishTest(autoSubmitted) {
+      if (submitted) return;
+
+      submitted = true;
+      clearInterval(timerInterval);
+
+      let score = 0;
+      let attempted = 0;
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        if (selected !== null) attempted++;
+
+        const correctDisplayIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        if (selected === correctDisplayIndex) score++;
+
+        const card = questionsContainer.children[questionIndex];
+        const optionButtons = card.querySelectorAll(".option");
+
+        optionButtons.forEach((button, optionIndex) => {
+          button.disabled = true;
+
+          if (question.displayOptions[optionIndex].isCorrect) {
+            button.classList.add("correct");
+          }
+
+          if (
+            selected === optionIndex &&
+            !question.displayOptions[optionIndex].isCorrect
+          ) {
+            button.classList.add("wrong");
+          }
+        });
+      });
+
+      form.style.display = "none";
+      document.getElementById("testHeader").style.display = "none";
+      resultCard.style.display = "block";
+
+      const percentage = Math.round(
+        (score / QUESTIONS_PER_TEST) * 100
+      );
+
+      document.getElementById("scoreText").textContent =
+        `Your Score: ${score}/${QUESTIONS_PER_TEST} (${percentage}%)`;
+
+      document.getElementById("resultMessage").textContent =
+        `${attempted} attempted • ${QUESTIONS_PER_TEST - attempted} unanswered` +
+        (autoSubmitted ? " • Time is over; test submitted automatically." : "");
+
+      renderReview();
+      saveTestHistory(score);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderReview() {
+      reviewContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        const correctIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        const review = document.createElement("div");
+        review.className = "review-item";
+
+        const title = document.createElement("strong");
+        title.textContent = `Q${questionIndex + 1}. ${question.q}`;
+
+        review.appendChild(title);
+
+        const yourAnswer = document.createElement("p");
+
+        yourAnswer.textContent = selected === null
+          ? "Your answer: Not attempted"
+          : `Your answer: ${question.displayOptions[selected].text}`;
+
+        yourAnswer.className =
+          selected === correctIndex ? "correct-text" : "wrong-text";
+
+        review.appendChild(yourAnswer);
+
+        const correctAnswer = document.createElement("p");
+        correctAnswer.className = "correct-text";
+
+        correctAnswer.textContent =
+          `Correct answer: ${question.displayOptions[correctIndex].text}`;
+
+        review.appendChild(correctAnswer);
+
+        const explanation = document.createElement("p");
+        explanation.textContent = `Explanation: ${question.explanation}`;
+
+        review.appendChild(explanation);
+        reviewContainer.appendChild(review);
+      });
+    }
+
+    function saveTestHistory(score) {
+      const currentUser = JSON.parse(
+        localStorage.getItem("skillCheckCurrentUser") || "null"
+      );
+
+      if (!currentUser || !currentUser.username) return;
+
+      let history = [];
+
+      try {
+        const storedHistory = JSON.parse(
+          localStorage.getItem("skillCheckTestHistory") || "[]"
+        );
+
+        if (Array.isArray(storedHistory)) {
+          history = storedHistory;
+        }
+      } catch (error) {
+        history = [];
+      }
+
+      history.push({
+        username: currentUser.username,
+        skill: "C",
+        level: "Hard",
+        score: score,
+        date: new Date().toLocaleString()
+      });
+
+      localStorage.setItem(
+        "skillCheckTestHistory",
+        JSON.stringify(history)
+      );
+    }
+
+  </script>
+
+</body>
+</html>

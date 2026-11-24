@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillCheck - CSS Hard Test</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4ff;
+      color: #252641;
+      line-height: 1.5;
+    }
+
+    nav {
+      background: #fff;
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 10px #0000000d;
+    }
+
+    nav h2 {
+      margin: 0;
+      color: #6254df;
+    }
+
+    nav a {
+      color: #6254df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      width: min(850px, 94%);
+      margin: 28px auto;
+    }
+
+    .header,
+    .question-card,
+    .result-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px #3434770b;
+    }
+
+    .header h1 {
+      color: #6254df;
+      margin: 0 0 8px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+    }
+
+    .test-info {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #timer {
+      color: #d93045;
+    }
+
+    .question-card {
+      width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .question-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .question-number {
+      flex-shrink: 0;
+      color: #6254df;
+      font-weight: bold;
+    }
+
+    .question-text {
+      min-width: 0;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      margin: 10px 0;
+      background: #f7f7ff;
+      border: 1px solid #e1e2f4;
+      border-radius: 9px;
+      cursor: pointer;
+      text-align: left;
+      overflow-wrap: anywhere;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .option:hover {
+      background: #eeeeff;
+      border-color: #aaa1ff;
+    }
+
+    .option.selected {
+      background: #e9e7ff;
+      border-color: #6254df;
+    }
+
+    .option-letter {
+      flex-shrink: 0;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .option.selected .option-letter {
+      background: #6254df;
+      border-color: #6254df;
+      color: white;
+    }
+
+    .option.correct {
+      background: #e1f8e8;
+      border-color: #28a745;
+    }
+
+    .option.wrong {
+      background: #ffe5e8;
+      border-color: #dc3545;
+    }
+
+    .option:disabled {
+      cursor: default;
+      color: #252641;
+      opacity: 1;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary-btn {
+      background: #6254df;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #4e40ca;
+    }
+
+    .secondary-btn {
+      background: #e9e8ff;
+      color: #5143ce;
+    }
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card h2 {
+      color: #6254df;
+      margin-top: 0;
+    }
+
+    #scoreText {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .review-item {
+      padding: 16px;
+      margin-top: 14px;
+      background: #f7f7ff;
+      border-radius: 9px;
+      overflow-wrap: anywhere;
+    }
+
+    .review-item p {
+      margin: 8px 0;
+    }
+
+    .correct-text {
+      color: #16803d;
+    }
+
+    .wrong-text {
+      color: #d12b3f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 12px;
+      color: #777;
+    }
+
+    @media (max-width: 520px) {
+      .header,
+      .question-card,
+      .result-card {
+        padding: 17px;
+      }
+
+      .test-info {
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .question-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <h2>SkillCheck</h2>
+    <a href="main.html">← Dashboard</a>
+  </nav>
+
+  <main class="container">
+
+    <section class="header" id="testHeader">
+      <h1>CSS - Hard Test</h1>
+      <p>Test your advanced CSS knowledge. Choose one answer for each question.</p>
+
+      <div class="test-info">
+        <span>Questions: 25</span>
+        <span>Maximum Marks: 25</span>
+        <span id="timer">Time Left: 10:00</span>
+      </div>
+    </section>
+
+    <form id="testForm">
+      <div id="questionsContainer"></div>
+
+      <div class="actions" id="testActions">
+        <a href="main.html" style="color:#6254df;text-decoration:none;">
+          Back to Dashboard
+        </a>
+
+        <button type="submit" class="btn primary-btn" id="submitBtn">
+          Submit Test
+        </button>
+      </div>
+    </form>
+
+    <section class="result-card" id="resultCard">
+      <h2>Test Completed!</h2>
+      <p id="scoreText"></p>
+      <p id="resultMessage"></p>
+
+      <div class="actions">
+        <a href="main.html" style="text-decoration:none;">
+          <button type="button" class="btn secondary-btn">Dashboard</button>
+        </a>
+
+        <button type="button" class="btn primary-btn" onclick="location.reload()">
+          Try Again
+        </button>
+      </div>
+
+      <h3>Answer Review</h3>
+      <div id="reviewContainer"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2026 SkillCheck | Improve Your Skills, One Test at a Time
+  </footer>
+
+  <script>
+
+    // QUESTION BANK: 25 CSS Hard questions
+
+    const allQuestions = [
+      {
+        q: "Which selector has the highest specificity?",
+        options: [
+          ":is(#main, .box)",
+          ":not(.container)",
+          "div#main",
+          ":where(#main)"
+        ],
+        answer: 0,
+        explanation: ":is() takes the specificity of its most specific argument. Here #main contributes ID specificity, making it higher than the other options."
+      },
+      {
+        q: "What is the specificity of the selector #nav .item:hover?",
+        options: [
+          "0-2-1",
+          "1-2-0",
+          "1-1-1",
+          "0-1-2"
+        ],
+        answer: 1,
+        explanation: "#nav contributes one ID, .item and :hover contribute two class-level values. Total specificity is 1-2-0."
+      },
+      {
+        q: "What happens when an element has position: sticky?",
+        options: [
+          "It is always fixed relative to the viewport",
+          "It behaves like relative until a scroll threshold is reached, then sticks within its containing block",
+          "It is removed from normal document flow",
+          "It behaves exactly like absolute positioning"
+        ],
+        answer: 1,
+        explanation: "A sticky element participates in normal flow and sticks relative to its nearest relevant scrolling ancestor when its inset threshold is reached."
+      },
+      {
+        q: "Which statement about CSS stacking contexts is correct?",
+        options: [
+          "z-index always compares elements globally",
+          "A child cannot escape its parent's stacking context to stack above elements outside it",
+          "Only position: absolute creates stacking contexts",
+          "Every HTML element creates a stacking context"
+        ],
+        answer: 1,
+        explanation: "Stacking contexts are independent. A child is stacked within its parent context and cannot outrank elements outside that context merely by using a larger z-index."
+      },
+      {
+        q: "What does minmax(200px, 1fr) do in CSS Grid?",
+        options: [
+          "Sets a track between a minimum of 200px and a flexible maximum",
+          "Creates exactly 200 columns",
+          "Sets both minimum and maximum to 1fr",
+          "Makes the track always 200px wide"
+        ],
+        answer: 0,
+        explanation: "minmax() defines a size range. Here the track cannot be smaller than 200px and can grow to a flexible fraction of available space."
+      },
+      {
+        q: "Which CSS function is useful for creating a responsive font size between a minimum and maximum value?",
+        options: [
+          "calc() only",
+          "clamp()",
+          "minmax()",
+          "translate()"
+        ],
+        answer: 1,
+        explanation: "clamp(minimum, preferred, maximum) allows a value to scale responsively while staying within defined limits."
+      },
+      {
+        q: "What does grid-template-areas define?",
+        options: [
+          "The spacing between grid items",
+          "Named regions of a grid layout",
+          "The number of grid rows only",
+          "The stacking order of grid items"
+        ],
+        answer: 1,
+        explanation: "grid-template-areas assigns names to grid cells, allowing layout regions to be arranged visually."
+      },
+      {
+        q: "Which property can prevent a flex item from shrinking below its content's minimum size?",
+        options: [
+          "flex-grow: 0",
+          "min-width: 0",
+          "min-width: auto",
+          "flex-wrap: nowrap"
+        ],
+        answer: 2,
+        explanation: "The default min-width: auto can preserve a flex item's min-content size, preventing it from shrinking below that size."
+      },
+      {
+        q: "What is the effect of transform: translateZ(0) commonly used for?",
+        options: [
+          "It always creates a new stacking context and may establish a compositing layer",
+          "It changes the element's width",
+          "It removes the element from document flow",
+          "It resets all inherited styles"
+        ],
+        answer: 0,
+        explanation: "A non-none transform creates a stacking context. Browsers may promote the element to a compositing layer, though this is implementation-dependent."
+      },
+      {
+        q: "Which property controls how an element's content is clipped when it overflows its box?",
+        options: [
+          "clip-path only",
+          "overflow",
+          "object-fit",
+          "white-space"
+        ],
+        answer: 1,
+        explanation: "The overflow property controls how content is handled when it exceeds an element's padding box."
+      },
+      {
+        q: "What does the CSS custom property declaration --main-color: red; represent?",
+        options: [
+          "A browser-specific property",
+          "A CSS custom property that can be referenced using var()",
+          "A built-in CSS variable",
+          "A property that only works in animations"
+        ],
+        answer: 1,
+        explanation: "Custom properties begin with two hyphens and can be used through var(--main-color)."
+      },
+      {
+        q: "What is the purpose of @supports in CSS?",
+        options: [
+          "To detect browser support for a CSS feature and conditionally apply styles",
+          "To load external fonts",
+          "To define animation keyframes",
+          "To create responsive breakpoints only"
+        ],
+        answer: 0,
+        explanation: "@supports checks whether the browser supports a particular CSS declaration before applying the enclosed rules."
+      },
+      {
+        q: "Which statement about the isolation: isolate property is correct?",
+        options: [
+          "It creates a new stacking context",
+          "It removes an element from the DOM",
+          "It disables all child positioning",
+          "It forces display: flex"
+        ],
+        answer: 0,
+        explanation: "isolation: isolate creates a new stacking context without requiring a z-index value."
+      },
+      {
+        q: "What does the :has() pseudo-class allow you to select?",
+        options: [
+          "Only elements with a specific ID",
+          "An element based on whether it contains or matches a relative selector",
+          "Only the last child of a parent",
+          "Elements that are hidden"
+        ],
+        answer: 1,
+        explanation: ":has() is a relational pseudo-class that selects an element if its relative selector argument matches."
+      },
+      {
+        q: "Which CSS property controls whether an element establishes a new formatting context for its contents?",
+        options: [
+          "display: flow-root",
+          "visibility: visible",
+          "position: static",
+          "font-style: normal"
+        ],
+        answer: 0,
+        explanation: "display: flow-root establishes a new block formatting context for the element's contents."
+      },
+      {
+        q: "What does contain: layout paint do?",
+        options: [
+          "Applies layout and paint containment to an element",
+          "Hides the element permanently",
+          "Prevents all CSS inheritance",
+          "Disables browser rendering"
+        ],
+        answer: 0,
+        explanation: "contain: layout paint applies layout and paint containment, limiting certain layout and painting effects outside the element."
+      },
+      {
+        q: "Which statement about the CSS cascade layers (@layer) is correct?",
+        options: [
+          "Layer order is considered before specificity when resolving normal declarations",
+          "Specificity always overrides layer order",
+          "Layers only work with inline styles",
+          "Layers disable inheritance"
+        ],
+        answer: 0,
+        explanation: "For normal declarations, cascade layer order is considered before specificity. Later layers have precedence over earlier layers."
+      },
+      {
+        q: "What does the will-change property do?",
+        options: [
+          "Guarantees an animation will run faster",
+          "Hints to the browser that an element's properties may change",
+          "Changes the element's position to fixed",
+          "Automatically adds transitions to all properties"
+        ],
+        answer: 1,
+        explanation: "will-change is a performance hint that allows the browser to prepare for expected changes. It should be used sparingly."
+      },
+      {
+        q: "Which statement about the CSS calc() function is correct?",
+        options: [
+          "It only performs addition",
+          "It allows calculations combining compatible CSS values",
+          "It works only with pixels",
+          "It cannot combine percentages and lengths"
+        ],
+        answer: 1,
+        explanation: "calc() can perform mathematical calculations using compatible CSS units, such as calc(100% - 20px)."
+      },
+      {
+        q: "What does pointer-events: none do?",
+        options: [
+          "Disables all keyboard interaction automatically",
+          "Prevents the element from being the target of pointer events",
+          "Makes the element invisible",
+          "Removes the element from document flow"
+        ],
+        answer: 1,
+        explanation: "pointer-events: none prevents the element itself from becoming the target of pointer events."
+      },
+      {
+        q: "Which statement about pseudo-elements ::before and ::after is correct?",
+        options: [
+          "They can only be used with block elements",
+          "They create generated content as children of the originating element",
+          "They always insert content into the DOM",
+          "They cannot be styled"
+        ],
+        answer: 1,
+        explanation: "::before and ::after create generated pseudo-elements associated with the selected element. They do not create actual DOM nodes."
+      },
+      {
+        q: "What is the main purpose of the aspect-ratio property?",
+        options: [
+          "To control the ratio between an element's width and height",
+          "To control text alignment",
+          "To change the display mode",
+          "To set the element's stacking order"
+        ],
+        answer: 0,
+        explanation: "aspect-ratio defines a preferred width-to-height ratio for an element's box."
+      },
+      {
+        q: "Which CSS property can change the order in which flex items appear visually?",
+        options: [
+          "z-index",
+          "order",
+          "position",
+          "float"
+        ],
+        answer: 1,
+        explanation: "The order property controls the visual order of flex and grid items without changing their DOM order."
+      },
+      {
+        q: "What does background-attachment: fixed generally do?",
+        options: [
+          "Makes the background image scroll with the element's content",
+          "Keeps the background image fixed relative to the viewport",
+          "Removes the background image",
+          "Repeats the background image horizontally"
+        ],
+        answer: 1,
+        explanation: "With background-attachment: fixed, the background image is fixed relative to the viewport, subject to browser and device behavior."
+      },
+      {
+        q: "Which statement about the universal selector (*) is correct?",
+        options: [
+          "It selects only div elements",
+          "It selects all elements in the document",
+          "It selects only elements with classes",
+          "It selects only direct children"
+        ],
+        answer: 1,
+        explanation: "The universal selector (*) matches all elements. It is often used in CSS resets and box-sizing rules."
+      }
+    ];
+
+    const QUESTIONS_PER_TEST = 25;
+    const TOTAL_TIME = 10 * 60;
+
+    const form = document.getElementById("testForm");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const timerElement = document.getElementById("timer");
+    const resultCard = document.getElementById("resultCard");
+    const reviewContainer = document.getElementById("reviewContainer");
+
+    let quizQuestions = [];
+    let selectedAnswers = [];
+    let timeLeft = TOTAL_TIME;
+    let timerInterval = null;
+    let submitted = false;
+
+    // CSS Hard test page check
+
+    const selectedSkill = localStorage.getItem("selectedSkill");
+    const selectedLevel = localStorage.getItem("selectedLevel");
+
+    if (
+      (selectedSkill && selectedSkill !== "CSS") ||
+      (selectedLevel && selectedLevel !== "Hard")
+    ) {
+      document.getElementById("testHeader").style.display = "none";
+      form.style.display = "none";
+      resultCard.style.display = "block";
+
+      resultCard.innerHTML = `
+        <h2>Test Not Available Yet</h2>
+        <p>Abhi sirf CSS Hard test select karo.</p>
+        <p>Dashboard par jaakar CSS Hard select karo.</p>
+        <br>
+        <a href="main.html">Back to Dashboard</a>
+      `;
+    } else {
+      startTest();
+    }
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled;
+    }
+
+    function startTest() {
+      quizQuestions = shuffleArray(allQuestions).slice(0, QUESTIONS_PER_TEST);
+
+      selectedAnswers = Array(quizQuestions.length).fill(null);
+
+      renderQuestions();
+      updateTimer();
+
+      timerInterval = setInterval(tickTimer, 1000);
+    }
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const card = document.createElement("section");
+        card.className = "question-card";
+
+        const title = document.createElement("h3");
+        title.className = "question-title";
+
+        const number = document.createElement("span");
+        number.className = "question-number";
+        number.textContent = `Q${questionIndex + 1}.`;
+
+        const questionText = document.createElement("span");
+        questionText.className = "question-text";
+        questionText.textContent = question.q;
+
+        title.append(number, questionText);
+        card.appendChild(title);
+
+        const options = shuffleArray(
+          question.options.map((text, originalIndex) => ({
+            text,
+            isCorrect: originalIndex === question.answer
+          }))
+        );
+
+        question.displayOptions = options;
+
+        options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "option";
+
+          const letter = document.createElement("span");
+          letter.className = "option-letter";
+          letter.textContent = String.fromCharCode(65 + optionIndex);
+
+          const text = document.createElement("span");
+          text.textContent = option.text;
+
+          button.append(letter, text);
+
+          button.addEventListener("click", () => {
+            if (submitted) return;
+
+            selectedAnswers[questionIndex] = optionIndex;
+
+            card.querySelectorAll(".option").forEach(item => {
+              item.classList.remove("selected");
+            });
+
+            button.classList.add("selected");
+          });
+
+          card.appendChild(button);
+        });
+
+        questionsContainer.appendChild(card);
+      });
+    }
+
+    function tickTimer() {
+      if (submitted) return;
+
+      timeLeft--;
+      updateTimer();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        finishTest(true);
+      }
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      timerElement.textContent =
+        `Time Left: ${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (submitted) return;
+
+      const attempted = selectedAnswers.filter(
+        answer => answer !== null
+      ).length;
+
+      if (!confirm(
+        `You answered ${attempted} out of ${QUESTIONS_PER_TEST} questions. Submit test?`
+      )) {
+        return;
+      }
+
+      finishTest(false);
+    });
+
+    function finishTest(autoSubmitted) {
+      if (submitted) return;
+
+      submitted = true;
+      clearInterval(timerInterval);
+
+      let score = 0;
+      let attempted = 0;
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        if (selected !== null) attempted++;
+
+        const correctDisplayIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        if (selected === correctDisplayIndex) score++;
+
+        const card = questionsContainer.children[questionIndex];
+        const optionButtons = card.querySelectorAll(".option");
+
+        optionButtons.forEach((button, optionIndex) => {
+          button.disabled = true;
+
+          if (question.displayOptions[optionIndex].isCorrect) {
+            button.classList.add("correct");
+          }
+
+          if (
+            selected === optionIndex &&
+            !question.displayOptions[optionIndex].isCorrect
+          ) {
+            button.classList.add("wrong");
+          }
+        });
+      });
+
+      form.style.display = "none";
+      document.getElementById("testHeader").style.display = "none";
+      resultCard.style.display = "block";
+
+      const percentage = Math.round(
+        (score / QUESTIONS_PER_TEST) * 100
+      );
+
+      document.getElementById("scoreText").textContent =
+        `Your Score: ${score}/${QUESTIONS_PER_TEST} (${percentage}%)`;
+
+      document.getElementById("resultMessage").textContent =
+        `${attempted} attempted • ${QUESTIONS_PER_TEST - attempted} unanswered` +
+        (autoSubmitted ? " • Time is over; test submitted automatically." : "");
+
+      renderReview();
+      saveTestHistory(score);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderReview() {
+      reviewContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        const correctIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        const review = document.createElement("div");
+        review.className = "review-item";
+
+        const title = document.createElement("strong");
+        title.textContent = `Q${questionIndex + 1}. ${question.q}`;
+
+        review.appendChild(title);
+
+        const yourAnswer = document.createElement("p");
+
+        yourAnswer.textContent = selected === null
+          ? "Your answer: Not attempted"
+          : `Your answer: ${question.displayOptions[selected].text}`;
+
+        yourAnswer.className =
+          selected === correctIndex ? "correct-text" : "wrong-text";
+
+        review.appendChild(yourAnswer);
+
+        const correctAnswer = document.createElement("p");
+        correctAnswer.className = "correct-text";
+
+        correctAnswer.textContent =
+          `Correct answer: ${question.displayOptions[correctIndex].text}`;
+
+        review.appendChild(correctAnswer);
+
+        const explanation = document.createElement("p");
+        explanation.textContent = `Explanation: ${question.explanation}`;
+
+        review.appendChild(explanation);
+        reviewContainer.appendChild(review);
+      });
+    }
+
+    function saveTestHistory(score) {
+      const currentUser = JSON.parse(
+        localStorage.getItem("skillCheckCurrentUser") || "null"
+      );
+
+      if (!currentUser || !currentUser.username) return;
+
+      let history = [];
+
+      try {
+        const storedHistory = JSON.parse(
+          localStorage.getItem("skillCheckTestHistory") || "[]"
+        );
+
+        if (Array.isArray(storedHistory)) {
+          history = storedHistory;
+        }
+      } catch (error) {
+        history = [];
+      }
+
+      history.push({
+        username: currentUser.username,
+        skill: "CSS",
+        level: "Hard",
+        score: score,
+        date: new Date().toLocaleString()
+      });
+
+      localStorage.setItem(
+        "skillCheckTestHistory",
+        JSON.stringify(history)
+      );
+    }
+
+  </script>
+
+</body>
+</html>

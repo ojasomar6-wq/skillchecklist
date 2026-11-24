@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillCheck - CSS Moderate Test</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4ff;
+      color: #252641;
+      line-height: 1.5;
+    }
+
+    nav {
+      background: #fff;
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 10px #0000000d;
+    }
+
+    nav h2 {
+      margin: 0;
+      color: #6254df;
+    }
+
+    nav a {
+      color: #6254df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      width: min(850px, 94%);
+      margin: 28px auto;
+    }
+
+    .header,
+    .question-card,
+    .result-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px #3434770b;
+    }
+
+    .header h1 {
+      color: #6254df;
+      margin: 0 0 8px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+    }
+
+    .test-info {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #timer {
+      color: #d93045;
+    }
+
+    .question-card {
+      width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .question-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .question-number {
+      flex-shrink: 0;
+      color: #6254df;
+      font-weight: bold;
+    }
+
+    .question-text {
+      min-width: 0;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      margin: 10px 0;
+      background: #f7f7ff;
+      border: 1px solid #e1e2f4;
+      border-radius: 9px;
+      cursor: pointer;
+      text-align: left;
+      overflow-wrap: anywhere;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .option:hover {
+      background: #eeeeff;
+      border-color: #aaa1ff;
+    }
+
+    .option.selected {
+      background: #e9e7ff;
+      border-color: #6254df;
+    }
+
+    .option-letter {
+      flex-shrink: 0;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .option.selected .option-letter {
+      background: #6254df;
+      border-color: #6254df;
+      color: white;
+    }
+
+    .option.correct {
+      background: #e1f8e8;
+      border-color: #28a745;
+    }
+
+    .option.wrong {
+      background: #ffe5e8;
+      border-color: #dc3545;
+    }
+
+    .option:disabled {
+      cursor: default;
+      color: #252641;
+      opacity: 1;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary-btn {
+      background: #6254df;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #4e40ca;
+    }
+
+    .secondary-btn {
+      background: #e9e8ff;
+      color: #5143ce;
+    }
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card h2 {
+      color: #6254df;
+      margin-top: 0;
+    }
+
+    #scoreText {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .review-item {
+      padding: 16px;
+      margin-top: 14px;
+      background: #f7f7ff;
+      border-radius: 9px;
+      overflow-wrap: anywhere;
+    }
+
+    .review-item p {
+      margin: 8px 0;
+    }
+
+    .correct-text {
+      color: #16803d;
+    }
+
+    .wrong-text {
+      color: #d12b3f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 12px;
+      color: #777;
+    }
+
+    @media (max-width: 520px) {
+      .header,
+      .question-card,
+      .result-card {
+        padding: 17px;
+      }
+
+      .test-info {
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .question-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <h2>SkillCheck</h2>
+    <a href="main.html">← Dashboard</a>
+  </nav>
+
+  <main class="container">
+
+    <section class="header" id="testHeader">
+      <h1>CSS - Moderate Test</h1>
+      <p>Test your CSS knowledge. Choose one answer for each question.</p>
+
+      <div class="test-info">
+        <span>Questions: 25</span>
+        <span>Maximum Marks: 25</span>
+        <span id="timer">Time Left: 10:00</span>
+      </div>
+    </section>
+
+    <form id="testForm">
+      <div id="questionsContainer"></div>
+
+      <div class="actions" id="testActions">
+        <a href="main.html" style="color:#6254df;text-decoration:none;">
+          Back to Dashboard
+        </a>
+
+        <button type="submit" class="btn primary-btn" id="submitBtn">
+          Submit Test
+        </button>
+      </div>
+    </form>
+
+    <section class="result-card" id="resultCard">
+      <h2>Test Completed!</h2>
+      <p id="scoreText"></p>
+      <p id="resultMessage"></p>
+
+      <div class="actions">
+        <a href="main.html" style="text-decoration:none;">
+          <button type="button" class="btn secondary-btn">Dashboard</button>
+        </a>
+
+        <button type="button" class="btn primary-btn" onclick="location.reload()">
+          Try Again
+        </button>
+      </div>
+
+      <h3>Answer Review</h3>
+      <div id="reviewContainer"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2026 SkillCheck | Improve Your Skills, One Test at a Time
+  </footer>
+
+  <script>
+
+    // QUESTION BANK: 25 CSS Moderate questions
+
+    const allQuestions = [
+      {
+        q: "What is the difference between display: none and visibility: hidden?",
+        options: [
+          "Both remove the element from the layout",
+          "display: none removes the element from layout, while visibility: hidden preserves its space",
+          "visibility: hidden removes the element from layout",
+          "There is no difference"
+        ],
+        answer: 1,
+        explanation: "display: none removes the element from the document layout. visibility: hidden hides it but preserves its layout space."
+      },
+      {
+        q: "Which CSS selector selects all paragraph elements inside a div, at any nesting level?",
+        options: [
+          "div > p",
+          "div + p",
+          "div p",
+          "div ~ p"
+        ],
+        answer: 2,
+        explanation: "The descendant selector (div p) selects every paragraph that is a descendant of a div."
+      },
+      {
+        q: "What is the default position value of an HTML element?",
+        options: [
+          "relative",
+          "absolute",
+          "fixed",
+          "static"
+        ],
+        answer: 3,
+        explanation: "The default position value for HTML elements is static."
+      },
+      {
+        q: "Which CSS property controls the stacking order of positioned elements?",
+        options: [
+          "display",
+          "z-index",
+          "order",
+          "stack"
+        ],
+        answer: 1,
+        explanation: "The z-index property controls the stacking order of positioned elements within their stacking context."
+      },
+      {
+        q: "What does box-sizing: border-box do?",
+        options: [
+          "Includes padding and border in the element's specified width and height",
+          "Excludes padding from width",
+          "Adds extra margin automatically",
+          "Removes the border"
+        ],
+        answer: 0,
+        explanation: "With border-box, the declared width and height include content, padding, and border."
+      },
+      {
+        q: "Which selector has the highest specificity?",
+        options: [
+          ".container",
+          "#header",
+          "div",
+          "*"
+        ],
+        answer: 1,
+        explanation: "An ID selector has higher specificity than a class selector, element selector, or universal selector."
+      },
+      {
+        q: "What is the purpose of the CSS pseudo-class :hover?",
+        options: [
+          "Selects the first child",
+          "Applies styles when the user points to an element",
+          "Selects disabled elements",
+          "Selects visited links only"
+        ],
+        answer: 1,
+        explanation: ":hover applies styles when the user points at an element with a pointing device."
+      },
+      {
+        q: "Which CSS property is used to create flexible layouts?",
+        options: [
+          "display: grid",
+          "display: flex",
+          "position: relative",
+          "float: left"
+        ],
+        answer: 1,
+        explanation: "display: flex creates a flex container and enables flexible alignment and distribution of its children."
+      },
+      {
+        q: "In Flexbox, which property aligns items along the main axis?",
+        options: [
+          "align-items",
+          "justify-content",
+          "align-content",
+          "flex-wrap"
+        ],
+        answer: 1,
+        explanation: "justify-content controls the distribution of flex items along the main axis."
+      },
+      {
+        q: "In Flexbox, which property aligns items along the cross axis?",
+        options: [
+          "justify-content",
+          "flex-direction",
+          "align-items",
+          "flex-grow"
+        ],
+        answer: 2,
+        explanation: "align-items aligns flex items along the cross axis."
+      },
+      {
+        q: "What does the CSS property flex-wrap: wrap do?",
+        options: [
+          "Shrinks all items to one line",
+          "Allows flex items to move onto multiple lines",
+          "Reverses the order of items",
+          "Hides overflowing items"
+        ],
+        answer: 1,
+        explanation: "flex-wrap: wrap allows flex items to move onto additional lines when there is not enough space."
+      },
+      {
+        q: "Which unit is relative to the font size of the root HTML element?",
+        options: [
+          "em",
+          "rem",
+          "%",
+          "vh"
+        ],
+        answer: 1,
+        explanation: "The rem unit is relative to the computed font size of the root element."
+      },
+      {
+        q: "What does the CSS unit vh represent?",
+        options: [
+          "Viewport height",
+          "Viewport width",
+          "Vertical heading",
+          "Variable height"
+        ],
+        answer: 0,
+        explanation: "1vh is equal to 1% of the viewport height."
+      },
+      {
+        q: "Which CSS rule is used to apply styles based on screen size?",
+        options: [
+          "@import",
+          "@media",
+          "@font-face",
+          "@keyframes"
+        ],
+        answer: 1,
+        explanation: "@media rules apply CSS based on media features such as viewport width and device characteristics."
+      },
+      {
+        q: "What does the CSS property overflow: hidden do?",
+        options: [
+          "Adds a scrollbar",
+          "Hides content that overflows the element's box",
+          "Makes content transparent",
+          "Removes the element"
+        ],
+        answer: 1,
+        explanation: "overflow: hidden clips overflowing content and does not display scrollbars for that clipped content."
+      },
+      {
+        q: "Which CSS property controls the space between grid columns?",
+        options: [
+          "column-space",
+          "grid-gap",
+          "column-gap",
+          "grid-column"
+        ],
+        answer: 2,
+        explanation: "column-gap sets the spacing between columns in a grid or multi-column layout."
+      },
+      {
+        q: "What does the CSS selector div > p select?",
+        options: [
+          "All paragraphs inside div at any depth",
+          "Only paragraphs that are direct children of div",
+          "All div elements inside paragraphs",
+          "The first paragraph only"
+        ],
+        answer: 1,
+        explanation: "The child combinator (>) selects only direct children."
+      },
+      {
+        q: "Which property is used to control the transparency of a background color without affecting child elements?",
+        options: [
+          "opacity",
+          "background-color with rgba()",
+          "visibility",
+          "display"
+        ],
+        answer: 1,
+        explanation: "Using an alpha value in rgba() makes the background color transparent without changing the opacity of child content."
+      },
+      {
+        q: "What does position: absolute position an element relative to?",
+        options: [
+          "Always the viewport",
+          "Its nearest positioned ancestor, or the initial containing block if none exists",
+          "The previous sibling",
+          "The document footer"
+        ],
+        answer: 1,
+        explanation: "An absolutely positioned element uses its nearest ancestor that establishes a positioning containing block. If none exists, it uses the initial containing block."
+      },
+      {
+        q: "Which pseudo-element is used to insert content before an element's content?",
+        options: [
+          "::after",
+          "::before",
+          ":first-child",
+          "::placeholder"
+        ],
+        answer: 1,
+        explanation: "::before creates a pseudo-element as the first child of the selected element."
+      },
+      {
+        q: "Which property determines how an image fits inside a fixed-size container?",
+        options: [
+          "object-fit",
+          "image-style",
+          "background-size",
+          "fit-content"
+        ],
+        answer: 0,
+        explanation: "object-fit controls how replaced content such as images is resized to fit its container."
+      },
+      {
+        q: "What does transition: all 0.3s ease do?",
+        options: [
+          "Applies an animation that repeats forever",
+          "Smoothly transitions changes to all animatable properties over 0.3 seconds",
+          "Delays the page loading by 0.3 seconds",
+          "Changes all properties instantly"
+        ],
+        answer: 1,
+        explanation: "The transition shorthand specifies the properties to transition, duration, timing function, and optional delay."
+      },
+      {
+        q: "Which CSS property is used to define the number of columns in a CSS Grid layout?",
+        options: [
+          "grid-template-columns",
+          "grid-column-count",
+          "column-template",
+          "grid-columns"
+        ],
+        answer: 0,
+        explanation: "grid-template-columns defines the sizes and number of columns in a grid."
+      },
+      {
+        q: "What does the CSS value inherit do?",
+        options: [
+          "Resets a property to its initial value",
+          "Uses the property's value from the parent element",
+          "Removes the property",
+          "Makes the property important"
+        ],
+        answer: 1,
+        explanation: "inherit explicitly makes an element use the computed value of that property from its parent."
+      },
+      {
+        q: "Which property controls the speed curve of a CSS transition?",
+        options: [
+          "transition-duration",
+          "transition-delay",
+          "transition-timing-function",
+          "transition-property"
+        ],
+        answer: 2,
+        explanation: "transition-timing-function defines how the intermediate values of a transition are calculated over time."
+      }
+    ];
+
+    const QUESTIONS_PER_TEST = 25;
+    const TOTAL_TIME = 10 * 60;
+
+    const form = document.getElementById("testForm");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const timerElement = document.getElementById("timer");
+    const resultCard = document.getElementById("resultCard");
+    const reviewContainer = document.getElementById("reviewContainer");
+
+    let quizQuestions = [];
+    let selectedAnswers = [];
+    let timeLeft = TOTAL_TIME;
+    let timerInterval = null;
+    let submitted = false;
+
+    // CSS Moderate test page check
+
+    const selectedSkill = localStorage.getItem("selectedSkill");
+    const selectedLevel = localStorage.getItem("selectedLevel");
+
+    if (
+      (selectedSkill && selectedSkill !== "CSS") ||
+      (selectedLevel && selectedLevel !== "Moderate")
+    ) {
+      document.getElementById("testHeader").style.display = "none";
+      form.style.display = "none";
+      resultCard.style.display = "block";
+
+      resultCard.innerHTML = `
+        <h2>Test Not Available Yet</h2>
+        <p>Abhi sirf CSS Moderate test select karo.</p>
+        <p>Dashboard par jaakar CSS Moderate select karo.</p>
+        <br>
+        <a href="main.html">Back to Dashboard</a>
+      `;
+    } else {
+      startTest();
+    }
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled;
+    }
+
+    function startTest() {
+      quizQuestions = shuffleArray(allQuestions).slice(0, QUESTIONS_PER_TEST);
+
+      selectedAnswers = Array(quizQuestions.length).fill(null);
+
+      renderQuestions();
+      updateTimer();
+
+      timerInterval = setInterval(tickTimer, 1000);
+    }
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const card = document.createElement("section");
+        card.className = "question-card";
+
+        const title = document.createElement("h3");
+        title.className = "question-title";
+
+        const number = document.createElement("span");
+        number.className = "question-number";
+        number.textContent = `Q${questionIndex + 1}.`;
+
+        const questionText = document.createElement("span");
+        questionText.className = "question-text";
+        questionText.textContent = question.q;
+
+        title.append(number, questionText);
+        card.appendChild(title);
+
+        const options = shuffleArray(
+          question.options.map((text, originalIndex) => ({
+            text,
+            isCorrect: originalIndex === question.answer
+          }))
+        );
+
+        question.displayOptions = options;
+
+        options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "option";
+
+          const letter = document.createElement("span");
+          letter.className = "option-letter";
+          letter.textContent = String.fromCharCode(65 + optionIndex);
+
+          const text = document.createElement("span");
+          text.textContent = option.text;
+
+          button.append(letter, text);
+
+          button.addEventListener("click", () => {
+            if (submitted) return;
+
+            selectedAnswers[questionIndex] = optionIndex;
+
+            card.querySelectorAll(".option").forEach(item => {
+              item.classList.remove("selected");
+            });
+
+            button.classList.add("selected");
+          });
+
+          card.appendChild(button);
+        });
+
+        questionsContainer.appendChild(card);
+      });
+    }
+
+    function tickTimer() {
+      if (submitted) return;
+
+      timeLeft--;
+      updateTimer();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        finishTest(true);
+      }
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      timerElement.textContent =
+        `Time Left: ${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (submitted) return;
+
+      const attempted = selectedAnswers.filter(
+        answer => answer !== null
+      ).length;
+
+      if (!confirm(
+        `You answered ${attempted} out of ${QUESTIONS_PER_TEST} questions. Submit test?`
+      )) {
+        return;
+      }
+
+      finishTest(false);
+    });
+
+    function finishTest(autoSubmitted) {
+      if (submitted) return;
+
+      submitted = true;
+      clearInterval(timerInterval);
+
+      let score = 0;
+      let attempted = 0;
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        if (selected !== null) attempted++;
+
+        const correctDisplayIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        if (selected === correctDisplayIndex) score++;
+
+        const card = questionsContainer.children[questionIndex];
+        const optionButtons = card.querySelectorAll(".option");
+
+        optionButtons.forEach((button, optionIndex) => {
+          button.disabled = true;
+
+          if (question.displayOptions[optionIndex].isCorrect) {
+            button.classList.add("correct");
+          }
+
+          if (
+            selected === optionIndex &&
+            !question.displayOptions[optionIndex].isCorrect
+          ) {
+            button.classList.add("wrong");
+          }
+        });
+      });
+
+      form.style.display = "none";
+      document.getElementById("testHeader").style.display = "none";
+      resultCard.style.display = "block";
+
+      const percentage = Math.round(
+        (score / QUESTIONS_PER_TEST) * 100
+      );
+
+      document.getElementById("scoreText").textContent =
+        `Your Score: ${score}/${QUESTIONS_PER_TEST} (${percentage}%)`;
+
+      document.getElementById("resultMessage").textContent =
+        `${attempted} attempted • ${QUESTIONS_PER_TEST - attempted} unanswered` +
+        (autoSubmitted ? " • Time is over; test submitted automatically." : "");
+
+      renderReview();
+      saveTestHistory(score);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderReview() {
+      reviewContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        const correctIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        const review = document.createElement("div");
+        review.className = "review-item";
+
+        const title = document.createElement("strong");
+        title.textContent = `Q${questionIndex + 1}. ${question.q}`;
+
+        review.appendChild(title);
+
+        const yourAnswer = document.createElement("p");
+
+        yourAnswer.textContent = selected === null
+          ? "Your answer: Not attempted"
+          : `Your answer: ${question.displayOptions[selected].text}`;
+
+        yourAnswer.className =
+          selected === correctIndex ? "correct-text" : "wrong-text";
+
+        review.appendChild(yourAnswer);
+
+        const correctAnswer = document.createElement("p");
+        correctAnswer.className = "correct-text";
+
+        correctAnswer.textContent =
+          `Correct answer: ${question.displayOptions[correctIndex].text}`;
+
+        review.appendChild(correctAnswer);
+
+        const explanation = document.createElement("p");
+        explanation.textContent = `Explanation: ${question.explanation}`;
+
+        review.appendChild(explanation);
+        reviewContainer.appendChild(review);
+      });
+    }
+
+    function saveTestHistory(score) {
+      const currentUser = JSON.parse(
+        localStorage.getItem("skillCheckCurrentUser") || "null"
+      );
+
+      if (!currentUser || !currentUser.username) return;
+
+      let history = [];
+
+      try {
+        const storedHistory = JSON.parse(
+          localStorage.getItem("skillCheckTestHistory") || "[]"
+        );
+
+        if (Array.isArray(storedHistory)) {
+          history = storedHistory;
+        }
+      } catch (error) {
+        history = [];
+      }
+
+      history.push({
+        username: currentUser.username,
+        skill: "CSS",
+        level: "Moderate",
+        score: score,
+        date: new Date().toLocaleString()
+      });
+
+      localStorage.setItem(
+        "skillCheckTestHistory",
+        JSON.stringify(history)
+      );
+    }
+
+  </script>
+
+</body>
+</html>

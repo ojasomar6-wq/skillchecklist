@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillCheck - C Easy Test</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4ff;
+      color: #252641;
+      line-height: 1.5;
+    }
+
+    nav {
+      background: #fff;
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 10px #0000000d;
+    }
+
+    nav h2 {
+      margin: 0;
+      color: #6254df;
+    }
+
+    nav a {
+      color: #6254df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      width: min(850px, 94%);
+      margin: 28px auto;
+    }
+
+    .header,
+    .question-card,
+    .result-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px #3434770b;
+    }
+
+    .header h1 {
+      color: #6254df;
+      margin: 0 0 8px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+    }
+
+    .test-info {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #timer {
+      color: #d93045;
+    }
+
+    .question-card {
+      width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .question-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .question-number {
+      flex-shrink: 0;
+      color: #6254df;
+      font-weight: bold;
+    }
+
+    .question-text {
+      min-width: 0;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      margin: 10px 0;
+      background: #f7f7ff;
+      border: 1px solid #e1e2f4;
+      border-radius: 9px;
+      cursor: pointer;
+      text-align: left;
+      overflow-wrap: anywhere;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .option:hover {
+      background: #eeeeff;
+      border-color: #aaa1ff;
+    }
+
+    .option.selected {
+      background: #e9e7ff;
+      border-color: #6254df;
+    }
+
+    .option-letter {
+      flex-shrink: 0;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .option.selected .option-letter {
+      background: #6254df;
+      border-color: #6254df;
+      color: white;
+    }
+
+    .option.correct {
+      background: #e1f8e8;
+      border-color: #28a745;
+    }
+
+    .option.wrong {
+      background: #ffe5e8;
+      border-color: #dc3545;
+    }
+
+    .option:disabled {
+      cursor: default;
+      color: #252641;
+      opacity: 1;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary-btn {
+      background: #6254df;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #4e40ca;
+    }
+
+    .secondary-btn {
+      background: #e9e8ff;
+      color: #5143ce;
+    }
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card h2 {
+      color: #6254df;
+      margin-top: 0;
+    }
+
+    #scoreText {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .review-item {
+      padding: 16px;
+      margin-top: 14px;
+      background: #f7f7ff;
+      border-radius: 9px;
+      overflow-wrap: anywhere;
+    }
+
+    .review-item p {
+      margin: 8px 0;
+    }
+
+    .correct-text {
+      color: #16803d;
+    }
+
+    .wrong-text {
+      color: #d12b3f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 12px;
+      color: #777;
+    }
+
+    @media (max-width: 520px) {
+      .header,
+      .question-card,
+      .result-card {
+        padding: 17px;
+      }
+
+      .test-info {
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .question-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <h2>SkillCheck</h2>
+    <a href="main.html">← Dashboard</a>
+  </nav>
+
+  <main class="container">
+
+    <section class="header" id="testHeader">
+      <h1>C Language - Easy Test</h1>
+      <p>Test your C programming fundamentals. Choose one answer for each question.</p>
+
+      <div class="test-info">
+        <span>Questions: 25</span>
+        <span>Maximum Marks: 25</span>
+        <span id="timer">Time Left: 10:00</span>
+      </div>
+    </section>
+
+    <form id="testForm">
+      <div id="questionsContainer"></div>
+
+      <div class="actions" id="testActions">
+        <a href="main.html" style="color:#6254df;text-decoration:none;">
+          Back to Dashboard
+        </a>
+
+        <button type="submit" class="btn primary-btn" id="submitBtn">
+          Submit Test
+        </button>
+      </div>
+    </form>
+
+    <section class="result-card" id="resultCard">
+      <h2>Test Completed!</h2>
+      <p id="scoreText"></p>
+      <p id="resultMessage"></p>
+
+      <div class="actions">
+        <a href="main.html" style="text-decoration:none;">
+          <button type="button" class="btn secondary-btn">Dashboard</button>
+        </a>
+
+        <button type="button" class="btn primary-btn" onclick="location.reload()">
+          Try Again
+        </button>
+      </div>
+
+      <h3>Answer Review</h3>
+      <div id="reviewContainer"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2026 SkillCheck | Improve Your Skills, One Test at a Time
+  </footer>
+
+  <script>
+
+    // QUESTION BANK: 25 C Language Easy questions
+
+    const allQuestions = [
+
+      {
+        q: "Who developed the C programming language?",
+        options: [
+          "James Gosling",
+          "Dennis Ritchie",
+          "Bjarne Stroustrup",
+          "Guido van Rossum"
+        ],
+        answer: 1,
+        explanation: "Dennis Ritchie developed the C programming language at Bell Laboratories."
+      },
+
+      {
+        q: "Which symbol is used to terminate a statement in C?",
+        options: [
+          ":",
+          ".",
+          ";",
+          ","
+        ],
+        answer: 2,
+        explanation: "A semicolon is used to terminate most statements in C."
+      },
+
+      {
+        q: "Which function is the entry point of a standard hosted C program?",
+        options: [
+          "start()",
+          "main()",
+          "run()",
+          "begin()"
+        ],
+        answer: 1,
+        explanation: "The main function is the entry point of a standard hosted C program."
+      },
+
+      {
+        q: "Which header file is required for using printf() and scanf()?",
+        options: [
+          "<math.h>",
+          "<string.h>",
+          "<stdio.h>",
+          "<stdlib.h>"
+        ],
+        answer: 2,
+        explanation: "The stdio.h header declares standard input and output functions such as printf and scanf."
+      },
+
+      {
+        q: "Which format specifier is used to print an integer using printf()?",
+        options: [
+          "%f",
+          "%c",
+          "%d",
+          "%s"
+        ],
+        answer: 2,
+        explanation: "%d is commonly used to print an int value in decimal notation."
+      },
+
+      {
+        q: "Which data type is used to store a single character in C?",
+        options: [
+          "int",
+          "char",
+          "float",
+          "double"
+        ],
+        answer: 1,
+        explanation: "The char data type stores a character value."
+      },
+
+      {
+        q: "Which operator is used for multiplication in C?",
+        options: [
+          "x",
+          "%",
+          "*",
+          "#"
+        ],
+        answer: 2,
+        explanation: "The asterisk (*) operator performs multiplication."
+      },
+
+      {
+        q: "Which of the following is a valid C variable declaration?",
+        options: [
+          "int 2num;",
+          "int num;",
+          "number int;",
+          "int num"
+        ],
+        answer: 1,
+        explanation: "int num; is a valid declaration of an integer variable."
+      },
+
+      {
+        q: "What is the correct format specifier for a float in printf()?",
+        options: [
+          "%d",
+          "%c",
+          "%f",
+          "%s"
+        ],
+        answer: 2,
+        explanation: "%f is used to print a floating-point value."
+      },
+
+      {
+        q: "Which function is commonly used to read input from the keyboard in C?",
+        options: [
+          "printf()",
+          "scanf()",
+          "display()",
+          "write()"
+        ],
+        answer: 1,
+        explanation: "scanf() reads formatted input from standard input."
+      },
+
+      {
+        q: "Which keyword is used to make a decision in C?",
+        options: [
+          "repeat",
+          "if",
+          "define",
+          "print"
+        ],
+        answer: 1,
+        explanation: "The if statement executes a block when its condition is true."
+      },
+
+      {
+        q: "Which loop executes its body at least once?",
+        options: [
+          "for loop",
+          "while loop",
+          "do-while loop",
+          "None of these"
+        ],
+        answer: 2,
+        explanation: "A do-while loop checks its condition after executing the body."
+      },
+
+      {
+        q: "Which keyword is used to exit a loop immediately?",
+        options: [
+          "continue",
+          "stop",
+          "break",
+          "exitloop"
+        ],
+        answer: 2,
+        explanation: "The break statement immediately terminates the nearest enclosing loop or switch."
+      },
+
+      {
+        q: "Which operator is used to find the remainder of a division?",
+        options: [
+          "/",
+          "*",
+          "%",
+          "+"
+        ],
+        answer: 2,
+        explanation: "The modulus operator (%) gives the remainder of integer division."
+      },
+
+      {
+        q: "What is the index of the first element in a C array?",
+        options: [
+          "1",
+          "-1",
+          "0",
+          "Depends on the array size"
+        ],
+        answer: 2,
+        explanation: "C arrays use zero-based indexing, so the first element has index 0."
+      },
+
+      {
+        q: "Which keyword is used to return a value from a function?",
+        options: [
+          "send",
+          "return",
+          "break",
+          "output"
+        ],
+        answer: 1,
+        explanation: "The return statement ends a function and can provide a value to its caller."
+      },
+
+      {
+        q: "Which symbol is used to access the address of a variable?",
+        options: [
+          "*",
+          "&",
+          "%",
+          "#"
+        ],
+        answer: 1,
+        explanation: "The address-of operator (&) gives the memory address of an object."
+      },
+
+      {
+        q: "Which symbol is used to declare a pointer variable?",
+        options: [
+          "&",
+          "*",
+          "%",
+          "@"
+        ],
+        answer: 1,
+        explanation: "The asterisk (*) is used in a declaration to indicate a pointer type."
+      },
+
+      {
+        q: "Which keyword is used to define a constant variable in C?",
+        options: [
+          "fixed",
+          "constant",
+          "const",
+          "static"
+        ],
+        answer: 2,
+        explanation: "The const qualifier prevents modification of an object through that identifier."
+      },
+
+      {
+        q: "What is the output of printf(\"%d\", 5 + 3);?",
+        options: [
+          "53",
+          "8",
+          "2",
+          "15"
+        ],
+        answer: 1,
+        explanation: "The addition of 5 and 3 produces 8."
+      },
+
+      {
+        q: "Which statement is used to skip the current iteration of a loop?",
+        options: [
+          "break",
+          "return",
+          "continue",
+          "skip"
+        ],
+        answer: 2,
+        explanation: "The continue statement skips the remaining body of the current iteration."
+      },
+
+      {
+        q: "Which header file contains the declaration of the strlen() function?",
+        options: [
+          "<stdio.h>",
+          "<stdlib.h>",
+          "<string.h>",
+          "<math.h>"
+        ],
+        answer: 2,
+        explanation: "The strlen() function is declared in the string.h header file."
+      },
+
+      {
+        q: "Which operator is used to compare two values for equality?",
+        options: [
+          "=",
+          "==",
+          "!=",
+          ">="
+        ],
+        answer: 1,
+        explanation: "The equality operator (==) checks whether two operands have equal values."
+      },
+
+      {
+        q: "What is the output of the expression 10 % 3?",
+        options: [
+          "1",
+          "3",
+          "0",
+          "10"
+        ],
+        answer: 0,
+        explanation: "10 divided by 3 leaves a remainder of 1."
+      },
+
+      {
+        q: "Which keyword is used to define a structure in C?",
+        options: [
+          "class",
+          "struct",
+          "object",
+          "record"
+        ],
+        answer: 1,
+        explanation: "The struct keyword defines a structure containing related members."
+      }
+
+    ];
+
+    const QUESTIONS_PER_TEST = 25;
+    const TOTAL_TIME = 10 * 60;
+
+    const form = document.getElementById("testForm");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const timerElement = document.getElementById("timer");
+    const resultCard = document.getElementById("resultCard");
+    const reviewContainer = document.getElementById("reviewContainer");
+
+    let quizQuestions = [];
+    let selectedAnswers = [];
+    let timeLeft = TOTAL_TIME;
+    let timerInterval = null;
+    let submitted = false;
+
+    // C Easy test page check
+
+    const selectedSkill = localStorage.getItem("selectedSkill");
+    const selectedLevel = localStorage.getItem("selectedLevel");
+
+    if (
+      (selectedSkill && selectedSkill !== "C") ||
+      (selectedLevel && selectedLevel !== "Easy")
+    ) {
+      document.getElementById("testHeader").style.display = "none";
+      form.style.display = "none";
+      resultCard.style.display = "block";
+
+      resultCard.innerHTML = `
+        <h2>Test Not Available Yet</h2>
+        <p>Abhi sirf C Easy test ready hai.</p>
+        <p>Dashboard par jaakar C Easy select karo.</p>
+        <br>
+        <a href="main.html">Back to Dashboard</a>
+      `;
+    } else {
+      startTest();
+    }
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled;
+    }
+
+    function startTest() {
+      quizQuestions = shuffleArray(allQuestions).slice(0, QUESTIONS_PER_TEST);
+
+      selectedAnswers = Array(quizQuestions.length).fill(null);
+
+      renderQuestions();
+      updateTimer();
+
+      timerInterval = setInterval(tickTimer, 1000);
+    }
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const card = document.createElement("section");
+        card.className = "question-card";
+
+        const title = document.createElement("h3");
+        title.className = "question-title";
+
+        const number = document.createElement("span");
+        number.className = "question-number";
+        number.textContent = `Q${questionIndex + 1}.`;
+
+        const questionText = document.createElement("span");
+        questionText.className = "question-text";
+        questionText.textContent = question.q;
+
+        title.append(number, questionText);
+        card.appendChild(title);
+
+        // Shuffle options while preserving the correct answer
+
+        const options = shuffleArray(
+          question.options.map((text, originalIndex) => ({
+            text,
+            isCorrect: originalIndex === question.answer
+          }))
+        );
+
+        question.displayOptions = options;
+
+        options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "option";
+
+          const letter = document.createElement("span");
+          letter.className = "option-letter";
+          letter.textContent = String.fromCharCode(65 + optionIndex);
+
+          const text = document.createElement("span");
+          text.textContent = option.text;
+
+          button.append(letter, text);
+
+          button.addEventListener("click", () => {
+            if (submitted) return;
+
+            selectedAnswers[questionIndex] = optionIndex;
+
+            card.querySelectorAll(".option").forEach(item => {
+              item.classList.remove("selected");
+            });
+
+            button.classList.add("selected");
+          });
+
+          card.appendChild(button);
+        });
+
+        questionsContainer.appendChild(card);
+      });
+    }
+
+    function tickTimer() {
+      if (submitted) return;
+
+      timeLeft--;
+      updateTimer();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        finishTest(true);
+      }
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+
+      timerElement.textContent =
+        `Time Left: ${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (submitted) return;
+
+      const attempted = selectedAnswers.filter(
+        answer => answer !== null
+      ).length;
+
+      if (!confirm(
+        `You answered ${attempted} out of ${QUESTIONS_PER_TEST} questions. Submit test?`
+      )) {
+        return;
+      }
+
+      finishTest(false);
+    });
+
+    function finishTest(autoSubmitted) {
+      if (submitted) return;
+
+      submitted = true;
+      clearInterval(timerInterval);
+
+      let score = 0;
+      let attempted = 0;
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        if (selected !== null) attempted++;
+
+        const correctDisplayIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        if (selected === correctDisplayIndex) score++;
+
+        const card = questionsContainer.children[questionIndex];
+        const optionButtons = card.querySelectorAll(".option");
+
+        optionButtons.forEach((button, optionIndex) => {
+          button.disabled = true;
+
+          if (question.displayOptions[optionIndex].isCorrect) {
+            button.classList.add("correct");
+          }
+
+          if (
+            selected === optionIndex &&
+            !question.displayOptions[optionIndex].isCorrect
+          ) {
+            button.classList.add("wrong");
+          }
+        });
+      });
+
+      form.style.display = "none";
+      document.getElementById("testHeader").style.display = "none";
+      resultCard.style.display = "block";
+
+      const percentage = Math.round(
+        (score / QUESTIONS_PER_TEST) * 100
+      );
+
+      document.getElementById("scoreText").textContent =
+        `Your Score: ${score}/${QUESTIONS_PER_TEST} (${percentage}%)`;
+
+      document.getElementById("resultMessage").textContent =
+        `${attempted} attempted • ${QUESTIONS_PER_TEST - attempted} unanswered` +
+        (autoSubmitted ? " • Time is over; test submitted automatically." : "");
+
+      renderReview();
+      saveTestHistory(score);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderReview() {
+      reviewContainer.innerHTML = "";
+
+      quizQuestions.forEach((question, questionIndex) => {
+        const selected = selectedAnswers[questionIndex];
+
+        const correctIndex = question.displayOptions.findIndex(
+          option => option.isCorrect
+        );
+
+        const review = document.createElement("div");
+        review.className = "review-item";
+
+        const title = document.createElement("strong");
+        title.textContent = `Q${questionIndex + 1}. ${question.q}`;
+
+        review.appendChild(title);
+
+        const yourAnswer = document.createElement("p");
+
+        yourAnswer.textContent = selected === null
+          ? "Your answer: Not attempted"
+          : `Your answer: ${question.displayOptions[selected].text}`;
+
+        yourAnswer.className =
+          selected === correctIndex ? "correct-text" : "wrong-text";
+
+        review.appendChild(yourAnswer);
+
+        const correctAnswer = document.createElement("p");
+        correctAnswer.className = "correct-text";
+
+        correctAnswer.textContent =
+          `Correct answer: ${question.displayOptions[correctIndex].text}`;
+
+        review.appendChild(correctAnswer);
+
+        const explanation = document.createElement("p");
+        explanation.textContent = `Explanation: ${question.explanation}`;
+
+        review.appendChild(explanation);
+        reviewContainer.appendChild(review);
+      });
+    }
+
+    function saveTestHistory(score) {
+      const currentUser = JSON.parse(
+        localStorage.getItem("skillCheckCurrentUser") || "null"
+      );
+
+      if (!currentUser || !currentUser.username) return;
+
+      let history = [];
+
+      try {
+        const storedHistory = JSON.parse(
+          localStorage.getItem("skillCheckTestHistory") || "[]"
+        );
+
+        if (Array.isArray(storedHistory)) {
+          history = storedHistory;
+        }
+      } catch (error) {
+        history = [];
+      }
+
+      history.push({
+        username: currentUser.username,
+        skill: "C",
+        level: "Easy",
+        score: score,
+        date: new Date().toLocaleString()
+      });
+
+      localStorage.setItem(
+        "skillCheckTestHistory",
+        JSON.stringify(history)
+      );
+    }
+
+  </script>
+
+</body>
+</html>
